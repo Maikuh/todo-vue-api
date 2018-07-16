@@ -37,8 +37,8 @@ User.methods.genHash = (password) => {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
 }
 
-User.methods.validatePass = (password, user) => {
-  return bcrypt.compareSync(password, user.password)
+User.methods.validatePass = (password, passInDb) => {
+  return bcrypt.compareSync(password, passInDb)
 }
 
 module.exports = mongoose.model('User', User)

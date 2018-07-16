@@ -1,45 +1,30 @@
-const JwtStrategy = require('passport-jwt').Strategy,
-      ExtractJwt = require('passport-jwt').ExtractJwt
+const JwtStrategy = require('passport-jwt').Strategy
+const ExtractJwt = require('passport-jwt').ExtractJwt
 const User = require('../models/User')
-const bcrypt = require('bcryptjs')
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.SECRET_OR_KEY
+  secretOrKey: process.env.SECRET_OR_KEY,
+  passReqToCallback: true
 }
 
 module.exports = passport => {
 
-  passport.use('jwt', new JwtStrategy(opts, (payload, done) => {
-    User.findOne({id: jwt_payload.sub}, function(err, user) {
-      if (err)
-          return done(err, false);
-      if (user)
-          return done(null, user);
-      else {
-          return done(null, false);
-          // or you could create a new account
-      }
+  passport.use(new JwtStrategy(opts, (req, payload, done) => {
+    User.findOne({_id: payload.id}, function(err, user) {
+      console.log('Payload received', payload);
+      console.log('User here', user)
+
+      if (err) return done(err, null);
+
+      if (!user) return done(null, false, {message: "User doesn't exist"})
+        
+      // if (!user.validatePass(req.body.password, user.password)) 
+      //   return done(null, false, {message: 'Wrong password'});
+      if (user && user.id == payload.id)
+        return done(null, user)
     });
   }))
-  // passport.use('login', new LocalStrategy({
-  //     usernameField: 'username',
-  //     passwordField: 'password',
-  //     passReqToCallback: true
-  //   },
-  //   function(req, username, password, done) {
-  //     User.findOne({ username: username }, function (err, user) {
-  //       if (err) return done(err);
-
-  //       if (!user) return done(null, false, {message: "User doesn't exist"})
-        
-  //       if (!user.validatePass(password, user)) 
-  //         return done(null, false, {message: 'Wrong password'});
-          
-  //       return done(null, user);
-  //     });
-  //   }
-  // ));
 
   // passport.use('register', new LocalStrategy({
   //     passReqToCallback: true,

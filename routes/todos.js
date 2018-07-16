@@ -1,14 +1,11 @@
 const express = require('express')
 const Todo = require('../models/Todo')
+const passport = require('passport')
 
 const router = express.Router()
 
-router.use('/', userAuth, (req, res, next) => {
-    next()
-})
-
 // Get all todos
-router.get('/', async (req, res) => {
+router.get('/', passport.authenticate('jwt', {session: false}), async (req, res) => {
     // Get all todos, excluding timestamps fields
     const todos = await Todo.find({}, { createdAt: 0, updatedAt: 0 })
 
@@ -73,14 +70,5 @@ router.delete('/', async (req, res) => {
         console.log(err)        
     }
 })
-
-function userAuth(req, res, next) {
-    if (req.isAuthenticated())
-        return next();
-    else {
-        req.flash('error', 'Please log in')
-        res.redirect('/api/users/login')
-    }
-}
 
 module.exports = router
