@@ -3,6 +3,10 @@ const Todo = require('../models/Todo')
 
 const router = express.Router()
 
+router.use('/', userAuth, (req, res, next) => {
+    next()
+})
+
 // Get all todos
 router.get('/', async (req, res) => {
     // Get all todos, excluding timestamps fields
@@ -69,5 +73,14 @@ router.delete('/', async (req, res) => {
         console.log(err)        
     }
 })
+
+function userAuth(req, res, next) {
+    if (req.isAuthenticated())
+        return next();
+    else {
+        req.flash('error', 'Please log in')
+        res.redirect('/api/users/login')
+    }
+}
 
 module.exports = router
