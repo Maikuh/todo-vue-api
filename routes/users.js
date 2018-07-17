@@ -12,11 +12,8 @@ router.get('/logout', (req, res) => {
   res.redirect('/api/users/login');
 });
 
-router.get('/profile', (req, res) => {
-  res.json({
-    user: req.user,
-    message: 'User successfully logged in or registered'
-  })
+router.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
+  res.json(req.user)
 })
 
 router.use('/', userNotAuth, (req, res, next) => {
@@ -66,6 +63,9 @@ router.post('/login', (req, res) => {
     let username = req.body.username
     let password = req.body.password
     
+    console.log(req.body);
+    
+
     User.findOne({ username: username }, (err, user) => {      
       if (err) console.log(err)
 
