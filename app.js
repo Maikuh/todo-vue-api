@@ -27,14 +27,8 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(validator());
 app.use(cors());
-// app.use(session({
-//     secret: 'dis is da bomb',
-//     resave: false,
-//     saveUninitialized: false
-// }))
 require("./config/passport")(passport);
 app.use(passport.initialize());
-// app.use(passport.session())
 app.use(flash());
 
 app.use((req, res, next) => {
