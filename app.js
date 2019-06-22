@@ -6,21 +6,20 @@ const cors = require("cors");
 const passport = require("passport");
 const flash = require("connect-flash");
 const validator = require("express-validator");
-require("dotenv").config();
-
 const app = express();
 
+if (process.env.NODE_ENV !== "production") require("dotenv").config();
+
+const PORT = process.env.PORT || 3000;
+
 mongoose
-  .connect("mongodb://localhost:27017/todo-vue", { useNewUrlParser: true })
+  .connect(process.env.DATABASE_URL, { useNewUrlParser: true })
   .then(db =>
     console.log(
       `Successfully connected to database '${db.connection.db.databaseName}'`
     )
   )
   .catch(err => console.error(err));
-
-// Settings
-app.set("port", process.env.PORT || 3000);
 
 // Middlewares
 app.use(morgan("dev"));
@@ -45,6 +44,6 @@ app.use("/api/users", require("./routes/users"));
 app.use(express.static(__dirname + "/public"));
 
 // Start server
-app.listen(app.get("port"), () => {
-  console.log("Server started at http://localhost:" + app.get("port"));
+app.listen(PORT, () => {
+  console.log("Server started at http://localhost:" + PORT);
 });
