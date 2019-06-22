@@ -13,7 +13,10 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 
 mongoose
-  .connect(process.env.DATABASE_URL, { useNewUrlParser: true })
+  .connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true
+  })
   .then(db =>
     console.log(
       `Successfully connected to database '${db.connection.db.databaseName}'`
